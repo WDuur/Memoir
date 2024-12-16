@@ -5,6 +5,8 @@ import { db } from './firebase' // Import your Firebase configuration
 
 import { useMemos } from './composables/useMemos'
 
+import MemoCard from './components/memoCard.vue'
+
 import type { Memo } from './types'
 
 const { memos, fetchMemos } = useMemos()
@@ -107,6 +109,7 @@ onMounted(fetchMemos)
     <ul>
       <li v-for="memo in filteredMemos" :key="memo.id">
         {{ memo.status }} | <strong>User {{ memo.user }}:</strong> {{ memo.message }}
+        <MemoCard />
       </li>
     </ul>
   </div>
