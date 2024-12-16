@@ -1,85 +1,138 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, computed, onMounted } from 'vue'
+import { collection, addDoc, getDocs } from 'firebase/firestore'
+import { db } from './firebase' // Import your Firebase configuration
+
+// Define the Memo interface
+interface Memo {
+  id?: string // Optional for new memos
+  user: string
+  message: string
+  status: string
+}
+
+// State variables
+const memos = ref<Memo[]>([])
+const newMemo = ref<Memo>({ user: '', message: '', status: '' })
+const selectedUser = ref<string>('') // State for the currently selected user filter
+
+// Fetch memos from Firestore
+const fetchMemos = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'memos'))
+    memos.value = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data() as Memo),
+    }))
+  } catch (e) {
+    console.error('Error fetching memos:', e)
+  }
+}
+
+// Add a new memo to Firestore
+const addMemo = async () => {
+  if (!newMemo.value.user || !newMemo.value.message) {
+    console.error('User and message are required')
+    return
+  }
+
+  try {
+    const docRef = await addDoc(collection(db, 'memos'), {
+      user: newMemo.value.user,
+      message: newMemo.value.message,
+    })
+    console.log('Memo added with ID:', docRef.id)
+
+    // Add the new memo to the list locally
+    memos.value.push({
+      id: docRef.id,
+      user: newMemo.value.user,
+      message: newMemo.value.message,
+      status: newMemo.value.status,
+    })
+
+    // Reset the form
+    newMemo.value.user = ''
+    newMemo.value.message = ''
+  } catch (e) {
+    console.error('Error adding memo:', e)
+  }
+}
+
+// Computed property for filtering memos
+const filteredMemos = computed(() => {
+  if (!selectedUser.value) return memos.value
+  return memos.value.filter((memo) => memo.user === selectedUser.value)
+})
+
+// Computed property to get unique users
+const uniqueUsers = computed(() => {
+  const users = memos.value.map((memo) => memo.user)
+  return Array.from(new Set(users))
+})
+
+// Fetch memos when the component is mounted
+onMounted(fetchMemos)
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div>
+    <h1>Memos</h1>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+    <!-- Filter Buttons -->
+    <div>
+      <button @click="selectedUser = ''" :class="{ active: selectedUser === '' }">Show All</button>
+      <button
+        v-for="user in uniqueUsers"
+        :key="user"
+        @click="selectedUser = user"
+        :class="{ active: selectedUser === user }"
+      >
+        User {{ user }}
+      </button>
     </div>
-  </header>
 
-  <RouterView />
+    <!-- Form to Add Memo -->
+    <form @submit.prevent="addMemo">
+      <input v-model="newMemo.user" type="text" placeholder="User ID" required />
+      <textarea v-model="newMemo.message" placeholder="Message" required></textarea>
+      <button type="submit">Add Memo</button>
+    </form>
+
+    <!-- Memo List -->
+    <ul>
+      <li v-for="memo in filteredMemos" :key="memo.id">
+        {{ memo.status }} | <strong>User {{ memo.user }}:</strong> {{ memo.message }}
+      </li>
+    </ul>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<style>
+/* Add styles for active buttons */
+button {
+  margin-right: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #e0e0e0;
+  cursor: pointer;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+button.active {
+  background-color: #007bff;
+  color: white;
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+form {
+  margin-bottom: 1rem;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+ul {
+  list-style: none;
+  padding: 0;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+li {
+  margin-bottom: 0.5rem;
 }
 </style>
