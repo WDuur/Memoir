@@ -1,33 +1,37 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { collection, addDoc, getDocs } from 'firebase/firestore'
+import { collection, addDoc } from 'firebase/firestore'
 import { db } from './firebase' // Import your Firebase configuration
 
-// Define the Memo interface
-interface Memo {
-  id?: string // Optional for new memos
-  user: string
-  message: string
-  status: string
-}
+import { useMemos } from './composables/useMemos'
 
-// State variables
-const memos = ref<Memo[]>([])
+import type { Memo } from './types'
+
+const { memos, fetchMemos } = useMemos()
+
+// interface Memo {
+//   id?: string
+//   user: string
+//   message: string
+//   status: string
+// }
+
+// const memos = ref<Memo[]>([])
 const newMemo = ref<Memo>({ user: '', message: '', status: '' })
-const selectedUser = ref<string>('') // State for the currently selected user filter
+const selectedUser = ref<string>('')
 
 // Fetch memos from Firestore
-const fetchMemos = async () => {
-  try {
-    const querySnapshot = await getDocs(collection(db, 'memos'))
-    memos.value = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...(doc.data() as Memo),
-    }))
-  } catch (e) {
-    console.error('Error fetching memos:', e)
-  }
-}
+// const fetchMemos = async () => {
+//   try {
+//     const querySnapshot = await getDocs(collection(db, 'memos'))
+//     memos.value = querySnapshot.docs.map((doc) => ({
+//       id: doc.id,
+//       ...(doc.data() as Memo),
+//     }))
+//   } catch (e) {
+//     console.error('Error fetching memos:', e)
+//   }
+// }
 
 // Add a new memo to Firestore
 const addMemo = async () => {
