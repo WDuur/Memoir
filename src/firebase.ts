@@ -1,16 +1,16 @@
 // src/firebase.js
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore' // Optional: Firestore
-import { getAuth } from 'firebase/auth' // Optional: Authentication
+import { getFirestore } from 'firebase/firestore'
+import { getAuth } from 'firebase/auth'
 
 // Your Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyAZVjRxjxsFxGa2hMooLBC_le3O2yRpbm4',
-  authDomain: 'memo-84a9e.firebaseapp.com',
-  projectId: 'memo-84a9e',
-  storageBucket: 'memo-84a9e.firebasestorage.app',
-  messagingSenderId: '795067140287',
-  appId: '1:795067140287:web:59af9cec970200b57c1e0a',
+  apiKey: import.meta.env.VITE_GOOGLE_API_KEY,
+  authDomain: import.meta.env.VITE_GOOGLE_DOMAIN,
+  projectId: import.meta.env.VITE_GOOGLE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_GOOGLE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_GOOGLE_SENDER_ID,
+  appId: import.meta.env.VITE_GOOGLE_APP_ID,
 }
 
 // Initialize Firebase
