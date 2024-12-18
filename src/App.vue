@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { collection, addDoc } from 'firebase/firestore'
-import { db } from './firebase' // Import your Firebase configuration
+// import { collection, addDoc } from 'firebase/firestore'
+// import { db } from './firebase' // Import your Firebase configuration
 
 import { useMemos } from './composables/useMemos'
 
 import MemoCard from './components/memoCard.vue'
+import AddMemo from './components/addMemo.vue'
 
-import type { Memo } from './types'
+// import type { Memo } from './types'
 
 const { memos, fetchMemos } = useMemos()
 
@@ -19,7 +20,7 @@ const { memos, fetchMemos } = useMemos()
 // }
 
 // const memos = ref<Memo[]>([])
-const newMemo = ref<Memo>({ user: '', message: '', status: '' })
+// const newMemo = ref<Memo>({ user: '', message: '', status: '' })
 const selectedUser = ref<string>('')
 
 // Fetch memos from Firestore
@@ -36,34 +37,34 @@ const selectedUser = ref<string>('')
 // }
 
 // Add a new memo to Firestore
-const addMemo = async () => {
-  if (!newMemo.value.user || !newMemo.value.message) {
-    console.error('User and message are required')
-    return
-  }
+// const addMemo = async () => {
+//   if (!newMemo.value.user || !newMemo.value.message) {
+//     console.error('User and message are required')
+//     return
+//   }
 
-  try {
-    const docRef = await addDoc(collection(db, 'memos'), {
-      user: newMemo.value.user,
-      message: newMemo.value.message,
-    })
-    console.log('Memo added with ID:', docRef.id)
+//   try {
+//     const docRef = await addDoc(collection(db, 'memos'), {
+//       user: newMemo.value.user,
+//       message: newMemo.value.message,
+//     })
+//     console.log('Memo added with ID:', docRef.id)
 
-    // Add the new memo to the list locally
-    memos.value.push({
-      id: docRef.id,
-      user: newMemo.value.user,
-      message: newMemo.value.message,
-      status: newMemo.value.status,
-    })
+//     // Add the new memo to the list locally
+//     memos.value.push({
+//       id: docRef.id,
+//       user: newMemo.value.user,
+//       message: newMemo.value.message,
+//       status: newMemo.value.status,
+//     })
 
-    // Reset the form
-    newMemo.value.user = ''
-    newMemo.value.message = ''
-  } catch (e) {
-    console.error('Error adding memo:', e)
-  }
-}
+//     // Reset the form
+//     newMemo.value.user = ''
+//     newMemo.value.message = ''
+//   } catch (e) {
+//     console.error('Error adding memo:', e)
+//   }
+// }
 
 // Computed property for filtering memos
 const filteredMemos = computed(() => {
@@ -99,19 +100,20 @@ onMounted(fetchMemos)
     </div>
 
     <!-- Form to Add Memo -->
-    <form @submit.prevent="addMemo">
+    <!-- <form @submit.prevent="addMemo">
       <input v-model="newMemo.user" type="text" placeholder="User ID" required />
       <textarea v-model="newMemo.message" placeholder="Message" required></textarea>
       <button type="submit">Add Memo</button>
-    </form>
+    </form> -->
 
     <!-- Memo List -->
-    <ul>
-      <li v-for="memo in filteredMemos" :key="memo.id">
-        {{ memo.status }} | <strong>User {{ memo.user }}:</strong> {{ memo.message }}
-        <MemoCard />
+    <ul class="flex flex-wrap w-screens gap-2">
+      <li v-for="memo in filteredMemos" :key="memo.id" class="w-full md:w-52">
+        <MemoCard :memo="memo" />
       </li>
     </ul>
+
+    <AddMemo />
   </div>
 </template>
 
