@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Memo } from '../types'
+import type { Memo } from '@/types'
 
 defineProps<{ memo: Memo }>()
 </script>

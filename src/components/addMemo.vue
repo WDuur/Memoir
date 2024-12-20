@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { useMemos } from '../composables/useMemos'
+import { useMemos } from '@/composables/useMemos'
 
-import type { Memo } from '../types'
+import type { Memo } from '@/types'
 
 const { addMemo } = useMemos()
 
