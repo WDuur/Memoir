@@ -1,78 +1,33 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { useMemos } from '@/composables/useMemos'
-import { useUser } from '@/composables/useUser'
+import { onMounted } from 'vue'
 
-import MemoCard from '@/components/memoCard.vue'
+import MemoContainer from '@/components/memoContainer.vue'
 import AddMemo from '@/components/addMemo.vue'
 import FilterMemoUsers from '@/components/filterMemoUsers.vue'
 
-const { memos, fetchMemos } = useMemos()
-const { selectedUser } = useUser()
-
-// Computed property for filtering memos
-const filteredMemos = computed(() => {
-  if (!selectedUser.value) return memos.value
-  return memos.value.filter((memo) => memo.user === selectedUser.value)
-})
+import { useMemos } from '@/composables/useMemos'
+const { fetchMemos } = useMemos()
 
 onMounted(fetchMemos)
 </script>
 
 <template>
-  <div>
-    <h1>Memos</h1>
-    <FilterMemoUsers />
+  <div class="memoir">
+    <h1 class="memoir__header">MEMOIR</h1>
 
-    <!-- Filter Buttons 
-    <div>
-      <button @click="selectedUser = ''" :class="{ active: selectedUser === '' }">Show All</button>
-      <button
-        v-for="user in uniqueUsers"
-        :key="user"
-        @click="selectUser(user)"
-        :class="{ active: selectedUser === user }"
-      >
-        {{ user }}
-      </button>
-    </div> -->
+    <FilterMemoUsers class="memoir__filter" />
 
-    <!-- Memo List -->
-    <ul class="flex flex-wrap w-screens gap-2">
-      <li v-for="memo in filteredMemos" :key="memo.id" class="w-full md:w-52">
-        <MemoCard :memo="memo" />
-      </li>
-    </ul>
-
-    <AddMemo />
+    <MemoContainer class="memoir__memos" />
   </div>
+  <AddMemo class="memoir__add-memo" />
 </template>
 
-<style>
-/* Add styles for active buttons */
-button {
-  margin-right: 0.5rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: #e0e0e0;
-  cursor: pointer;
-}
+<style lang="scss" scoped>
+.memoir {
+  @apply flex flex-col h-screen items-center gap-4;
 
-button.active {
-  background-color: #007bff;
-  color: white;
-}
-
-form {
-  margin-bottom: 1rem;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  margin-bottom: 0.5rem;
+  &__header {
+    @apply flex items-center w-screen justify-center text-6xl text-gray-800;
+  }
 }
 </style>
