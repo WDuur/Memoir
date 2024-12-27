@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { useUser } from '@/composables/useUser'
+import { onMounted } from 'vue'
 
-const { selectedUser, uniqueUsers, selectUser } = useUser()
+const { selectedUser, uniqueUsers, selectUser, fetchUsers } = useUser()
+onMounted(fetchUsers)
 </script>
 
 <template>

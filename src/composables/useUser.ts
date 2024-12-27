@@ -1,24 +1,33 @@
 import { ref, computed } from 'vue'
+import { getDocs, collection } from 'firebase/firestore'
+import { db } from '../firebase'
 import { useMemos } from './useMemos'
+import type { Member } from '../types'
 
 const { memos } = useMemos()
 const selectedUser = ref<string>('')
-/**
- * Composition function that returns a reactive reference to the currently
- * selected user, an array of unique users, and a function to select a user.
- *
- * @returns An object with the following properties:
- *   - `selectedUser`: A reactive reference to the currently selected user.
- *   - `uniqueUsers`: An array of unique user names.
- *   - `selectUser`: A function that takes a user name as an argument and
- *     sets the selected user to that name.
- */
+const members = ref<Member[]>([])
+
 export function useUser() {
+  const fetchUsers = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'members'))
+      console.log(querySnapshot)
+      members.value = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Member),
+      }))
+      console.log('Fetched users:', members.value)
+    } catch (e) {
+      console.error('Error fetching members:', e)
+    }
+  }
+
   const uniqueUsers = computed(() => {
     const users = memos.value.map((memo) => memo.user)
     return Array.from(new Set(users))
   })
-  console.log(uniqueUsers)
+  console.log('unique susers', uniqueUsers)
 
   const selectUser = (user: string) => {
     console.log(user)
@@ -27,6 +36,7 @@ export function useUser() {
 
   return {
     selectUser,
+    fetchUsers,
     uniqueUsers,
     selectedUser,
   }
