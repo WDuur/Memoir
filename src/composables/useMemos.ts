@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { getDocs, addDoc, collection, updateDoc, doc } from 'firebase/firestore'
+import { getDocs, addDoc, collection, updateDoc, doc, deleteDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import type { Memo } from '../types'
 const memos = ref<Memo[]>([])
@@ -10,7 +10,7 @@ export function useMemos() {
       const querySnapshot = await getDocs(collection(db, 'memos'))
       console.log(querySnapshot)
       memos.value = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
+        userId: doc.id, // Ensure the id is set correctly
         ...(doc.data() as Memo),
       }))
 
@@ -21,7 +21,7 @@ export function useMemos() {
   }
 
   const addMemo = async (newMemo: Memo) => {
-    const idNumber = 'test'
+    const idNumber = ''
     if (!newMemo.user || !newMemo.message) {
       console.error('User and message are required')
       return
@@ -54,21 +54,33 @@ export function useMemos() {
   const updateMemoStatus = async (memoId: string) => {
     try {
       const memoDoc = doc(db, 'memos', memoId.toString())
-
-      await updateDoc(memoDoc, { status: 'idle' })
-      const memo = memos.value.find((m) => m.id === memoId)
+      console.log('memoDoc', memoDoc)
+      const memo = memos.value.find((m) => m.userId === memoId)
+      console.log('memo', memo)
       if (memo?.status === 'open') {
-        memo.status = 'idle'
-      } else {
-        if (memo) {
+        setTimeout(async () => {
+          await updateDoc(memoDoc, { status: 'idle' })
+          memo.status = 'idle'
+        }, 300)
+      } else if (memo?.status === 'idle') {
+        setTimeout(async () => {
+          await updateDoc(memoDoc, { status: 'open' })
           memo.status = 'open'
-        }
-        console.warn(`Memo with id ${memoId} not found locally.`)
+        }, 300)
       }
-
-      console.log(`Memo ${memoId} status updated to 'idle'.`)
     } catch (e) {
       console.error('Error updating memo status:', e)
+    }
+  }
+
+  const deleteMemo = async (memoId: string) => {
+    try {
+      const memoDoc = doc(db, 'memos', memoId.toString())
+      await deleteDoc(memoDoc)
+      memos.value = memos.value.filter((m) => m.id !== memoId)
+      console.log(`Memo ${memoId} deleted successfully.`)
+    } catch (e) {
+      console.error('Error deleting memo:', e)
     }
   }
 
@@ -77,5 +89,6 @@ export function useMemos() {
     fetchMemos,
     addMemo,
     updateMemoStatus,
+    deleteMemo,
   }
 }

@@ -1,4 +1,5 @@
 export type Memo = {
+  userId?: string
   id?: string
   user: string
   message: string

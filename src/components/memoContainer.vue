@@ -21,8 +21,8 @@ const filteredMemos = computed(() => {
 </script>
 
 <template>
-  <transition-group name="fade" tag="ul" class="memo-card__container">
-    <li v-for="memo in filteredMemos" :key="memo.id" class="memo-card__card">
+  <transition-group name="fade" tag="ul" class="memo-card__container memoir__memos">
+    <li v-for="memo in filteredMemos" :key="memo.userId" class="memo-card__card">
       <MemoCard :memo="memo" />
     </li>
   </transition-group>
