@@ -1,17 +1,31 @@
 <script lang="ts" setup>
 import IconPlus from '../components/icons/IconPlus.vue'
+import { useMemos } from '@/composables/useMemos'
+
+const { showMemosRead } = useMemos()
 </script>
+
 <template>
-  <div class="pemio_header">
+  <div class="spemio_header">
     <h1 class="">SPEM<span>.io</span></h1>
-    <div>
-      <RouterLink to="/members"><IconPlus class="pemio_header__icon" /></RouterLink>
+    <div class="spemio_header__actions">
+      <RouterLink to="/members"><IconPlus class="spemio_header__icon" /></RouterLink>
+      <input
+        type="checkbox"
+        class="peer sr-only opacity-0"
+        id="toggle-read-messages"
+        name="toggle"
+        @click="showMemosRead(($event.target as HTMLInputElement).checked)"
+      />
+      <label for="toggle-read-messages" class="spemio_header__disable">
+        <span class="sr-only">Enable</span>
+      </label>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.pemio_header {
+.spemio_header {
   @apply bg-gray-700  dark:bg-gray-800;
   @apply flex flex-row justify-around items-center gap-4 w-full;
   @apply text-gray-400;
@@ -23,6 +37,9 @@ import IconPlus from '../components/icons/IconPlus.vue'
       @apply text-xl text-gray-400;
     }
   }
+  &__actions {
+    @apply flex gap-4 items-center;
+  }
 
   &__icon {
     @apply text-4xl text-gray-400;
@@ -30,6 +47,13 @@ import IconPlus from '../components/icons/IconPlus.vue'
     @apply hover:text-gray-200;
     @apply transition-colors;
     @apply w-10 h-10;
+  }
+  &__disable {
+    @apply relative flex h-6 w-11 cursor-pointer items-center rounded-full;
+    @apply bg-gray-400 px-0.5 outline-gray-400 transition-colors;
+    @apply before:h-5 before:w-5 before:rounded-full before:bg-white before:shadow before:transition-transform before:duration-300;
+    @apply peer-checked:bg-gray-600 peer-checked:before:translate-x-full peer-focus-visible:outline peer-focus-visible:outline-offset-2;
+    @apply peer-focus-visible:outline-gray-400 peer-checked:peer-focus-visible:outline-gray-600;
   }
 }
 </style>

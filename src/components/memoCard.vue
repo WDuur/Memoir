@@ -11,7 +11,14 @@ const status = computed(() => props.memo.status || 'open')
 </script>
 <template>
   <div
-    :class="['card', { 'card--open': status === 'open', 'card--idle': status === 'idle' }]"
+    :class="[
+      'card',
+      {
+        'card--open': status === 'open',
+        'card--idle': status === 'idle',
+        'card--read': status === 'read',
+      },
+    ]"
     class="card"
   >
     <div class="card-header">
@@ -44,20 +51,20 @@ const status = computed(() => props.memo.status || 'open')
   @apply h-full;
 
   &--idle {
-    @apply opacity-30;
+    @apply opacity-40;
+  }
+  &--read {
+    @apply hidden w-0 h-0;
   }
   &-header {
     @apply flex justify-between;
-    &__close {
-      @apply bg-yellow-600 w-5 h-5 text-black text-lg font-medium me-2 px-2.5 py-0.5 rounded-full;
-      @apply cursor-pointer;
-    }
+
     &__disable {
       @apply relative flex h-6 w-11 cursor-pointer items-center rounded-full;
       @apply bg-gray-400 px-0.5 outline-gray-400 transition-colors;
       @apply before:h-5 before:w-5 before:rounded-full before:bg-white before:shadow before:transition-transform before:duration-300;
-      @apply peer-checked:bg-green-500 peer-checked:before:translate-x-full peer-focus-visible:outline peer-focus-visible:outline-offset-2;
-      @apply peer-focus-visible:outline-gray-400 peer-checked:peer-focus-visible:outline-green-500;
+      @apply peer-checked:bg-yellow-600 peer-checked:before:translate-x-full peer-focus-visible:outline peer-focus-visible:outline-offset-2;
+      @apply peer-focus-visible:outline-gray-400 peer-checked:peer-focus-visible:outline-yellow-600;
     }
   }
 

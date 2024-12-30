@@ -8,13 +8,10 @@ export function useMemos() {
   const fetchMemos = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'memos'))
-      console.log(querySnapshot)
       memos.value = querySnapshot.docs.map((doc) => ({
         userId: doc.id, // Ensure the id is set correctly
         ...(doc.data() as Memo),
       }))
-
-      console.log('Fetched memos:', memos.value)
     } catch (e) {
       console.error('Error fetching memos:', e)
     }
@@ -54,19 +51,18 @@ export function useMemos() {
   const updateMemoStatus = async (memoId: string) => {
     try {
       const memoDoc = doc(db, 'memos', memoId.toString())
-      console.log('memoDoc', memoDoc)
       const memo = memos.value.find((m) => m.userId === memoId)
-      console.log('memo', memo)
+
       if (memo?.status === 'open') {
         setTimeout(async () => {
-          await updateDoc(memoDoc, { status: 'idle' })
-          memo.status = 'idle'
-        }, 300)
+          await updateDoc(memoDoc, { status: 'read' })
+          memo.status = 'read'
+        }, 200)
       } else if (memo?.status === 'idle') {
         setTimeout(async () => {
           await updateDoc(memoDoc, { status: 'open' })
           memo.status = 'open'
-        }, 300)
+        }, 200)
       }
     } catch (e) {
       console.error('Error updating memo status:', e)
@@ -83,6 +79,11 @@ export function useMemos() {
       console.error('Error deleting memo:', e)
     }
   }
+  const showMemosRead = (checked: boolean) => {
+    memos.value = memos.value.map((m) =>
+      m.status === (checked ? 'read' : 'idle') ? { ...m, status: checked ? 'idle' : 'read' } : m,
+    )
+  }
 
   return {
     memos,
@@ -90,5 +91,6 @@ export function useMemos() {
     addMemo,
     updateMemoStatus,
     deleteMemo,
+    showMemosRead,
   }
 }
