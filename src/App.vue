@@ -13,18 +13,18 @@ onMounted(fetchMemos)
 </script>
 
 <template>
-  <div class="pemio">
+  <div class="memoir">
     <AppHeader />
 
-    <FilterMemoUsers class="pemio__filter" />
+    <FilterMemoUsers class="memoir__filter" />
 
     <RouterView />
   </div>
-  <AddMemo class="pemio__add-memo" />
+  <AddMemo class="memoir__add-memo" />
 </template>
 
 <style lang="scss" scoped>
-.pemio {
+.memoir {
   @apply flex flex-col h-screen items-center gap-4;
 
   &__header {

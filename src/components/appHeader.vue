@@ -7,7 +7,7 @@ const { showMemosRead } = useMemos()
 
 <template>
   <div class="spemio_header">
-    <h1 class="">SPEM<span>.io</span></h1>
+    <img src="../assets/logo.png" alt="logo" class="spemio_header__logo" />
     <div class="spemio_header__actions">
       <RouterLink to="/members"><IconPlus class="spemio_header__icon" /></RouterLink>
       <input
