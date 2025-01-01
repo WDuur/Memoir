@@ -5,9 +5,9 @@ import { useMemos } from '@/composables/useMemos'
 
 const props = defineProps<{ memo: Memo }>()
 
-const { updateMemoStatus, deleteMemo } = useMemos()
+const { updateMemoStatus } = useMemos()
 
-const status = computed(() => props.memo.status || 'open')
+const status = computed(() => props.memo.status)
 </script>
 <template>
   <div
@@ -23,9 +23,8 @@ const status = computed(() => props.memo.status || 'open')
   >
     <div class="card-header">
       <h5 class="card-title">{{ memo.user }}</h5>
-
       <input
-        v-if="memo.userId"
+        v-if="memo.userId && memo.status !== 'read'"
         type="checkbox"
         class="peer sr-only opacity-0"
         :id="`${memo.userId}-toggle`"
@@ -36,7 +35,6 @@ const status = computed(() => props.memo.status || 'open')
       <label :for="`${memo.userId}-toggle`" class="card-header__disable">
         <span class="sr-only">Enable</span>
       </label>
-      <div v-if="memo.status === 'idle' && memo.userId" @click="deleteMemo(memo.userId)">🔥</div>
     </div>
     <span :class="['card-message', { 'card-message--idle': status === 'idle' }]">{{
       memo.message
@@ -63,7 +61,7 @@ const status = computed(() => props.memo.status || 'open')
       @apply relative flex h-6 w-11 cursor-pointer items-center rounded-full;
       @apply bg-gray-400 px-0.5 outline-gray-400 transition-colors;
       @apply before:h-5 before:w-5 before:rounded-full before:bg-white before:shadow before:transition-transform before:duration-300;
-      @apply peer-checked:bg-yellow-600 peer-checked:before:translate-x-full peer-focus-visible:outline peer-focus-visible:outline-offset-2;
+      @apply peer-checked:bg-gray-500 peer-checked:before:translate-x-full peer-focus-visible:outline peer-focus-visible:outline-offset-2;
       @apply peer-focus-visible:outline-gray-400 peer-checked:peer-focus-visible:outline-yellow-600;
     }
   }

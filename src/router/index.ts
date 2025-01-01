@@ -4,12 +4,7 @@ const routes = [
   {
     path: '/',
     name: 'MemoView',
-    component: () => import('@/views/memoView.vue'),
-  },
-  {
-    path: '/members',
-    name: 'MembersView',
-    component: () => import('@/views/memoView.vue'),
+    component: () => import('@/views/MemoView.vue'),
   },
 ]
 
