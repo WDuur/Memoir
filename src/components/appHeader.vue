@@ -9,7 +9,6 @@ const { showMemosRead } = useMemos()
   <div class="spemio_header">
     <img src="../assets/logo.png" alt="logo" class="spemio_header__logo" />
     <div class="spemio_header__actions">
-      <RouterLink to="/members"><IconPlus class="spemio_header__icon" /></RouterLink>
       <input
         type="checkbox"
         class="peer sr-only opacity-0"
@@ -20,6 +19,7 @@ const { showMemosRead } = useMemos()
       <label for="toggle-read-messages" class="spemio_header__disable">
         <span class="sr-only">Enable</span>
       </label>
+      <RouterLink to="/members"><IconPlus class="spemio_header__icon" /></RouterLink>
     </div>
   </div>
 </template>
@@ -30,7 +30,9 @@ const { showMemosRead } = useMemos()
   @apply flex flex-row justify-around items-center gap-4 w-full;
   @apply text-gray-400;
   @apply sticky top-0 z-10;
-
+  &__logo {
+    @apply p-2;
+  }
   h1 {
     @apply text-6xl  text-gray-600;
     & span {
@@ -46,7 +48,7 @@ const { showMemosRead } = useMemos()
     @apply cursor-pointer;
     @apply hover:text-gray-200;
     @apply transition-colors;
-    @apply w-10 h-10;
+    @apply w-5 h-5;
   }
   &__disable {
     @apply relative flex h-6 w-11 cursor-pointer items-center rounded-full;

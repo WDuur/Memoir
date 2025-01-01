@@ -6,8 +6,10 @@ import AddMemo from '@/components/addMemo.vue'
 import FilterMemoUsers from '@/components/filterMemoUsers.vue'
 
 import { useMemos } from '@/composables/useMemos'
+import { useUser } from '@/composables/useUser'
 
 const { fetchMemos } = useMemos()
+const { selectedUser } = useUser()
 
 onMounted(fetchMemos)
 </script>
@@ -20,15 +22,31 @@ onMounted(fetchMemos)
 
     <RouterView />
   </div>
-  <AddMemo class="memoir__add-memo" />
+  <Transition>
+    <AddMemo v-if="selectedUser" class="memoir__add" />
+  </Transition>
 </template>
 
 <style lang="scss" scoped>
 .memoir {
-  @apply flex flex-col h-screen items-center gap-4;
+  @apply flex flex-col items-center gap-4;
 
   &__header {
     @apply flex items-center w-screen justify-center text-6xl text-gray-800;
   }
+  &__add {
+    @apply fixed bottom-0 z-10;
+  }
+}
+.v-enter-active,
+.v-leave-active {
+  transition: 0.6s ease;
+  @apply fixed bottom-0 z-10;
+}
+
+.v-enter-from,
+.v-leave-to {
+  bottom: -400px;
+  @apply fixed  z-10;
 }
 </style>
